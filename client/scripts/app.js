@@ -2,7 +2,13 @@
 let app = {}
 $(document).ready(() => {
 	app.server = 'http://parse.rbk.hackreactor.com/chatterbox/classes/messages';
-	app.init = () => {};
+	// object contain name of room as a key and all messages to this  rom as array of object ;
+	app.rooms = {};
+  app.messages = [];
+	app.init = () => {
+		// we can put the initial virables and any things we want to run first like functions , etc ; 
+
+	};
 	app.send = (message) => {    // this message represant object 
 		$.ajax({
 			url :app.server,
@@ -12,6 +18,8 @@ $(document).ready(() => {
 			success : (data) => {
 				console.log('success', data);
 				$('#chats').html('');
+				// to remove value from text after send data
+				$('#message-input').val().text('');
 				app.fetch();
 			},
 			error: (data) => {
@@ -22,7 +30,6 @@ $(document).ready(() => {
 	app.fetch = () => {
 		// $.get(app.server, (data) => {
 		// 	console.log(data);
-
 		// });
 		$.ajax({
 			url :app.server,
@@ -46,7 +53,7 @@ $(document).ready(() => {
 
 	};
 	app.clearMessages = () => {
-		$('#chats').text(''); //  clear(delete) all the message inside the div of chats
+		$('#chats').html(''); //  clear(delete) all the message inside the div of chats
 	};
 	app.renderMessage = (message) => {
 		let $containerMsg = $(`<div class ="chat" id=${message.username}></div>`); // we use message.username as uniqe id for eacg message;
@@ -61,7 +68,7 @@ $(document).ready(() => {
      };
 	//{roomname1: [message1,meeessage], ghjh:[],
 	// roomname2 : .....   }
-	app.rooms = {};
+	
 	app.addRooms = (message) => {
 		if (!app.rooms[message.roomname]) {
 			app.rooms[message.roomname] = [message];
@@ -87,7 +94,15 @@ $('#submit-btn').on('click', () => {
 	message.roomname = "RBK 5";
 	app.send(message);
 })
-
+// filter the messages based on the name of room
+$("#roomSelect").change(function(){
+    //UNDO
+   let roomMsgs = app.rooms[$(this).val()];
+   app.clearMessages();
+   roomMsgs.forEach((elem) => {
+   	app.renderMessage(elem)
+   })
+});
 
  // we have to call it so it can run auto when our app run 
 
